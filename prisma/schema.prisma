@@ -20,15 +20,16 @@ model Mixdown {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String?
-  image     String?
-  rooms     Room[]   @relation("HostRooms")
-  loops     Loop[]
-  createdAt DateTime @default(now())
-  mixdowns  Mixdown[]
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String?
+  image         String?
+  rooms         Room[]   @relation("HostRooms")
+  loops         Loop[]
+  createdAt     DateTime @default(now())
+  mixdowns      Mixdown[]
+  participatedRooms Room[] @relation("RoomParticipants")
 }
 
 model Room {
@@ -43,6 +44,7 @@ model Room {
   loops       Loop[]
   createdAt   DateTime @default(now())
   mixdowns    Mixdown[]
+  participants User[]  @relation("RoomParticipants")
 }
 
 model Loop {

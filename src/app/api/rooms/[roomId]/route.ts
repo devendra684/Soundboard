@@ -25,6 +25,11 @@ export async function GET(req: NextRequest, context: { params: Promise<{ roomId:
       isPublic: true,
       hostId: true,
       createdAt: true,
+      _count: {
+        select: {
+          participants: true
+        }
+      }
     },
   });
 
@@ -33,7 +38,10 @@ export async function GET(req: NextRequest, context: { params: Promise<{ roomId:
   }
 
   // 3️⃣ Return
-  return NextResponse.json(room);
+  return NextResponse.json({
+    ...room,
+    usersCount: room._count.participants
+  });
 }
 
 export async function PATCH(req: NextRequest, context: { params: Promise<{ roomId: string }> }) {
@@ -78,8 +86,16 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ roomI
       isPublic: true,
       hostId: true,
       createdAt: true,
+      _count: {
+        select: {
+          participants: true
+        }
+      }
     },
   });
 
-  return NextResponse.json(updated);
+  return NextResponse.json({
+    ...updated,
+    usersCount: updated._count.participants
+  });
 }
