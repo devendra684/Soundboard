@@ -31,7 +31,7 @@ export function Loading({ variant = "default", className, text }: LoadingProps) 
     ),
     page: (
       <div className="min-h-screen bg-gradient-to-br from-[#1a0850] via-[#2a0c73] to-[#1e1a4b] flex items-center justify-center">
-        <div className="bg-[#23124d] p-8 rounded-2xl shadow-xl">
+        <div className="bg-[#23124d] p-8 rounded-2xl shadow-xl flex flex-col items-center">
           <Loader2 className="w-12 h-12 text-white animate-spin" />
           {text && <span className="mt-4 text-white/80 text-sm">{text}</span>}
         </div>

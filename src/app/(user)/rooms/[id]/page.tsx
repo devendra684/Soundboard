@@ -376,7 +376,7 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  if (roomLoading || loopsLoading || !room || !session || !session.user) {
+  if (roomLoading || !room || !session || !session.user) {
     return <Loading variant="page" text="Loading room..." />;
   }
 
