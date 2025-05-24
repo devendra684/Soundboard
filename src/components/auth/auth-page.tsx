@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Loading } from "@/components/common/loading";
 
 // ▸ minimal schema
 const schema = z.object({
@@ -30,6 +31,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // pick callbackUrl from ?callbackUrl=... or default
   const callbackUrl = searchParams.get("callbackUrl") || "/rooms";
@@ -40,6 +42,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
   });
 
   async function onSubmit(values: FormValues) {
+    setIsLoading(true);
     const res = await signIn("credentials", {
       email: values.email,
       password: values.password,
@@ -53,6 +56,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
       router.push(callbackUrl);
       router.refresh();
     }
+    setIsLoading(false);
   }
 
   return (
@@ -99,8 +103,8 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
 
               {error && <p className="text-sm text-red-500">{error}</p>}
 
-              <Button type="submit" className="w-full">
-                {variant === "login" ? "Log in" : "Sign up & continue"}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? <Loading variant="button" text={variant === "login" ? "Logging in..." : "Signing up..."} /> : (variant === "login" ? "Log in" : "Sign up & continue")}
               </Button>
             </form>
           </Form>
@@ -108,7 +112,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
           <div className="mt-6 text-center text-sm">
             {variant === "login" ? (
               <>
-                Don’t have an account?{" "}
+                Don't have an account?{" "}
                 <a
                   href={`/signup?callbackUrl=${encodeURIComponent(
                     callbackUrl
