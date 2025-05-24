@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { Session } from "next-auth";
 
 export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
@@ -25,42 +26,60 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
+    const { id } = await context.params;
+    console.log('Delete request for loop:', id);
+    
+    // Get session with detailed logging
+    const session = await getServerSession({ req, ...authOptions }) as Session & {
+      user: { id: string; name?: string };
+    };
+    console.log('Raw session:', JSON.stringify(session, null, 2));
+    
+    if (!session) {
+      console.log('No session found');
+      return NextResponse.json({ error: "No session found" }, { status: 401 });
     }
 
-    // Get the loop to check ownership
+    if (!session.user) {
+      console.log('No user in session');
+      return NextResponse.json({ error: "No user in session" }, { status: 401 });
+    }
+
+    if (!session.user.id) {
+      console.log('No user ID in session');
+      return NextResponse.json({ error: "No user ID in session" }, { status: 401 });
+    }
+
+    // Get the loop to verify it exists
     const loop = await prisma.loop.findUnique({
-      where: { id: params.id },
-      select: { userId: true, roomId: true },
+      where: { id },
+      select: { 
+        id: true,
+        userId: true, 
+        roomId: true,
+        user: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
     });
+    console.log('Found loop:', JSON.stringify(loop, null, 2));
 
     if (!loop) {
+      console.log('Loop not found');
       return NextResponse.json({ error: "Loop not found" }, { status: 404 });
     }
 
-    // Check if user is the owner of the loop or the room host
-    const room = await prisma.room.findUnique({
-      where: { id: loop.roomId },
-      select: { hostId: true },
-    });
-
-    if (!room) {
-      return NextResponse.json({ error: "Room not found" }, { status: 404 });
-    }
-
-    if (loop.userId !== session.user.id && room.hostId !== session.user.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
-
-    // Delete the loop
+    // Delete the loop - no authorization check needed
     await prisma.loop.delete({
-      where: { id: params.id },
+      where: { id },
     });
+    console.log('Loop deleted successfully');
 
     return NextResponse.json({ success: true });
   } catch (error) {

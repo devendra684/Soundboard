@@ -23,8 +23,23 @@ export async function POST(req: NextRequest) {
       isPublic,
       hostId: session.user.id,
       code,
+      participants: {
+        connect: {
+          id: session.user.id
+        }
+      }
     },
+    include: {
+      _count: {
+        select: {
+          participants: true
+        }
+      }
+    }
   });
 
-  return NextResponse.json({ id: room.id });
+  return NextResponse.json({ 
+    id: room.id,
+    usersCount: room._count.participants
+  });
 }

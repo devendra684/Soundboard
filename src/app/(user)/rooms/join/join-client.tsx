@@ -14,6 +14,7 @@ export default function JoinClient() {
     fetch("/api/rooms/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ code: token }),
     })
       .then((r) => r.json())

@@ -17,7 +17,7 @@ const createLoopSchema = z.object({
 /* ------------------------------------------------------------------ */
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const session = await getServerSession({ req, ...authOptions }) as any;
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
     }
@@ -51,13 +51,27 @@ export async function POST(req: NextRequest) {
     // Verify room exists and user has access
     const room = await prisma.room.findUnique({
       where: { id: formData.roomId },
+      select: {
+        id: true,
+        hostId: true,
+        isPublic: true,
+        participants: {
+          select: {
+            id: true
+          }
+        }
+      },
     });
 
     if (!room) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    if (room.hostId !== session.user.id) {
+    // Allow upload if user is host OR if user is a participant
+    const isHost = room.hostId === session.user.id;
+    const isParticipant = room.participants.some(p => p.id === session.user.id);
+    
+    if (!isHost && !isParticipant) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 

@@ -228,11 +228,24 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
       setDeletingId(id);
       const res = await fetch(`/api/loops/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      if (!res.ok) throw new Error('Failed to delete recording');
-      mutateLoops();
-    } catch {
-      alert('Failed to delete recording. Please try again.');
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        console.log('Delete response:', data);
+        throw new Error(data.error || 'Failed to delete recording');
+      }
+      
+      await mutateLoops();
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      console.log('Error details:', error.message);
+      alert(error.message || 'Failed to delete recording. Please try again.');
     } finally {
       setDeletingId(null);
       setPendingDeleteId(null);

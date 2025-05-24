@@ -4,12 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Mic, Layers, Download, Music } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Avatar } from "@/components/common/avatar";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
   const { data: session } = useSession();
+  const [roomCode, setRoomCode] = useState("");
+  const router = useRouter();
+
+  const handleJoinRoom = () => {
+    if (!roomCode) return;
+    router.push(`/rooms/join?token=${roomCode}`);
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#001085] via-[#006bff] to-[#00d2ff] flex flex-col items-center">
       {/* Header */}
@@ -76,8 +85,18 @@ export default function LandingPage() {
               <h2 className="text-2xl font-bold text-white mb-2">Join Session</h2>
               <p className="text-white/80 mb-6 text-center text-base">Enter a room code to join an existing jam session</p>
               <div className="flex gap-2 w-full justify-center">
-                <Input placeholder="Enter room code" className="w-44 h-12 rounded-full bg-background/80 text-foreground shadow-inner px-5" />
-                <Button className="h-12 rounded-full bg-gradient-to-r from-[#ff6a00] to-[#ffb347] text-white shadow-lg hover:scale-105 transition-transform">Join Room</Button>
+                <Input 
+                  placeholder="Enter room code" 
+                  className="w-44 h-12 rounded-full bg-background/80 text-foreground shadow-inner px-5"
+                  value={roomCode}
+                  onChange={(e) => setRoomCode(e.target.value)}
+                />
+                <Button 
+                  className="h-12 rounded-full bg-gradient-to-r from-[#ff6a00] to-[#ffb347] text-white shadow-lg hover:scale-105 transition-transform"
+                  onClick={handleJoinRoom}
+                >
+                  Join Room
+                </Button>
               </div>
             </CardContent>
           </Card>
