@@ -2,10 +2,10 @@
 
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Users, Mic, Music, Volume2, Trash2 } from "lucide-react";
-import { use } from "react";
+import Link from "next/link";
 import { Loading } from "@/components/common/loading";
 import { InviteModal } from "@/components/invite-modal";
 
@@ -160,7 +160,7 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
       const url = URL.createObjectURL(wavBlob);
       setMixedDemoUrl(url);
       setMixReady(true);
-    } catch (error) {
+    } catch {
       alert("Could not mix tracks. Please try again.");
     } finally {
       setMixing(false);
@@ -181,7 +181,7 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomId: room.id, url: mixedDemoUrl }),
       });
-    } catch (error) {
+    } catch {
       alert("Could not export mixdown. Please try again.");
     } finally {
       setMixing(false);
@@ -231,8 +231,7 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
       });
       if (!res.ok) throw new Error('Failed to delete recording');
       mutateLoops();
-    } catch (error) {
-      console.error('Delete error:', error);
+    } catch {
       alert('Failed to delete recording. Please try again.');
     } finally {
       setDeletingId(null);
@@ -373,9 +372,9 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
       {/* Header */}
       <div className="flex items-center justify-between px-8 py-4 border-b border-white/10">
         <div className="flex items-center gap-4">
-          <a href="/rooms" className="flex items-center text-white/80 hover:text-white transition-colors">
+          <Link href="/rooms" className="flex items-center text-white/80 hover:text-white transition-colors">
             <span className="mr-2">←</span> Leave Room
-          </a>
+          </Link>
         </div>
         <div className="flex flex-col items-center">
           <h1 className="text-2xl font-bold text-white">{room.title || "Jam Session"}</h1>
