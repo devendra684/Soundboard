@@ -57,4 +57,5 @@ model Loop {
   createdAt DateTime @default(now())
   enabled   Boolean  @default(true)
   volume    Float    @default(1.0)
+  duration  Float?   // duration in seconds
 }

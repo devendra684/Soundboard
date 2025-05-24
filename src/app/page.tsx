@@ -115,7 +115,7 @@ export default function LandingPage() {
       </section>
       {/* Footer */}
       <footer className="w-full py-6 text-center text-white/60 text-sm mt-12">
-        &copy; {new Date().getFullYear()} SoundBoard.
+        &copy; {new Date().getFullYear()} SoundBoard. Made with ❤️ for collaborative musicians.
       </footer>
     </div>
   );
