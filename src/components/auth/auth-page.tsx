@@ -52,9 +52,9 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
 
     if (res?.error) {
       setError(res.error);
+      setIsLoading(false);
     } else {
-      router.push(callbackUrl);
-      router.refresh();
+      window.location.href = callbackUrl;
     }
   }
 

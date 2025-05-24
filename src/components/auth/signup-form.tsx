@@ -69,8 +69,7 @@ export default function SignupForm() {
         setError(signInRes.error);
         setIsLoading(false);
       } else {
-        router.push(callbackUrl);
-        router.refresh();
+        window.location.href = callbackUrl;
       }
     } finally {
       setIsLoading(false);
