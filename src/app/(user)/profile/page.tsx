@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Music, Layers, Download } from "lucide-react";
 import { Session } from "next-auth";
 
 export default async function ProfilePage() {

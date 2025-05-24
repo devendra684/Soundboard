@@ -5,8 +5,6 @@ import Link from "next/link";
 import { Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Listbox } from '@headlessui/react';
-import { createPortal } from 'react-dom';
-import { Fragment } from 'react';
 
 const BPM_OPTIONS = Array.from({ length: 201 }, (_, i) => 40 + i); // 40-240
 const KEY_OPTIONS = [
