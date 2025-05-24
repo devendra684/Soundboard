@@ -29,8 +29,6 @@ model User {
   loops     Loop[]
   createdAt DateTime @default(now())
   mixdowns  Mixdown[]
-  resetToken String?
-  resetTokenExpiry DateTime?
 }
 
 model Room {
