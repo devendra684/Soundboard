@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +28,6 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
