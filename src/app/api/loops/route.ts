@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       roomId: fd.get("roomId") as string,
       name: (fd.get("name") ?? "Untitled") as string,
       order: Number(fd.get("order") ?? 0),
+      duration: fd.has("duration") ? Number(fd.get("duration")) : undefined,
     };
 
     try {
@@ -80,6 +81,7 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
         name: formData.name,
         order: formData.order,
+        duration: formData.duration,
       },
     });
 
@@ -113,6 +115,7 @@ export async function GET(req: NextRequest) {
         order: true,
         volume: true,
         createdAt: true,
+        duration: true,
         user: {
           select: {
             id: true,
@@ -147,6 +150,7 @@ export async function GET(req: NextRequest) {
       roomId: true,
       volume: true,
       createdAt: true,
+      duration: true,
       user: {
         select: {
           id: true,
