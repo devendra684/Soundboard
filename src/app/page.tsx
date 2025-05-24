@@ -33,7 +33,7 @@ export default function LandingPage() {
               </>
             ) : (
               <>
-                <Link href="/login">
+                <Link href="/login?callbackUrl=/analytics">
                   <Button size="sm" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg hover:scale-105 transition-transform">Login</Button>
                 </Link>
                 <Link href="/signup">
