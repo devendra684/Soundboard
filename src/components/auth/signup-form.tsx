@@ -35,7 +35,7 @@ export default function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/rooms";
+  const callbackUrl = searchParams.get("callbackUrl") || "/analytics";
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -67,6 +67,7 @@ export default function SignupForm() {
 
       if (signInRes?.error) {
         setError(signInRes.error);
+        setIsLoading(false);
       } else {
         router.push(callbackUrl);
         router.refresh();

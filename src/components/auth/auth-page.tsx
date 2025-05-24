@@ -34,7 +34,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
   const [isLoading, setIsLoading] = useState(false);
 
   // pick callbackUrl from ?callbackUrl=... or default
-  const callbackUrl = searchParams.get("callbackUrl") || "/rooms";
+  const callbackUrl = searchParams.get("callbackUrl") || "/analytics";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -56,7 +56,6 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
       router.push(callbackUrl);
       router.refresh();
     }
-    setIsLoading(false);
   }
 
   return (
