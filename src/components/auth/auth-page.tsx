@@ -112,7 +112,7 @@ export default function AuthPage({ variant }: { variant: "login" | "signup" }) {
           <div className="mt-6 text-center text-sm">
             {variant === "login" ? (
               <>
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <a
                   href={`/signup?callbackUrl=${encodeURIComponent(
                     callbackUrl
