@@ -6,8 +6,10 @@ export const metadata = { title: "Log in – SoundBoard" };
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<Loading variant="page" text="Loading login form..." />}>
-      <AuthPage variant="login" />
-    </Suspense>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+      <Suspense fallback={<Loading variant="overlay" text="Loading login form..." />}>
+        <AuthPage variant="login" />
+      </Suspense>
+    </div>
   );
 }
