@@ -37,6 +37,47 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Check if room exists and if it's public or user has access
+  const room = await prisma.room.findUnique({
+    where: { id: roomId },
+    select: {
+      isPublic: true,
+      hostId: true,
+      participants: {
+        select: { id: true }
+      }
+    }
+  });
+
+  if (!room) {
+    return NextResponse.json({ error: "Room not found" }, { status: 404 });
+  }
+
+  // Allow mixdown if:
+  // 1. Room is public OR
+  // 2. User is host OR
+  // 3. User is a participant
+  const isHost = room.hostId === session.user.id;
+  const isParticipant = room.participants.some(p => p.id === session.user.id);
+
+  if (!room.isPublic && !isHost && !isParticipant) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  // If room is public and user is not a participant, add them
+  if (room.isPublic && !isParticipant && !isHost) {
+    await prisma.room.update({
+      where: { id: roomId },
+      data: {
+        participants: {
+          connect: {
+            id: session.user.id
+          }
+        }
+      }
+    });
+  }
+
   const mixdown = await prisma.mixdown.create({
     data: {
       userId: session.user.id,

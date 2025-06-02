@@ -7,13 +7,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 export async function GET(req: NextRequest, context: { params: Promise<{ roomId: string }> }) {
   const { roomId } = await context.params;
 
-  // 1️⃣ Auth
-  const session = await getServerSession({ req, ...authOptions });
-  if (!(session?.user as any)?.id) {
-    return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
-  }
-
-  // 2️⃣ Fetch room
+  // 1️⃣ Fetch room first to check if it's public
   const room = await prisma.room.findUnique({
     where: { id: roomId },
     select: {
@@ -37,7 +31,21 @@ export async function GET(req: NextRequest, context: { params: Promise<{ roomId:
     return NextResponse.json({ error: "Room not found" }, { status: 404 });
   }
 
-  // 3️⃣ Return
+  // 2️⃣ If room is public, allow access without authentication
+  if (room.isPublic) {
+    return NextResponse.json({
+      ...room,
+      usersCount: room._count.participants
+    });
+  }
+
+  // 3️⃣ For private rooms, require authentication
+  const session = await getServerSession({ req, ...authOptions });
+  if (!(session?.user as any)?.id) {
+    return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
+  }
+
+  // 4️⃣ Return room data
   return NextResponse.json({
     ...room,
     usersCount: room._count.participants

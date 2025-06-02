@@ -67,12 +67,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    // Allow upload if user is host OR if user is a participant
+    // Allow upload if:
+    // 1. Room is public OR
+    // 2. User is host OR
+    // 3. User is a participant
     const isHost = room.hostId === session.user.id;
     const isParticipant = room.participants.some(p => p.id === session.user.id);
     
-    if (!isHost && !isParticipant) {
+    if (!room.isPublic && !isHost && !isParticipant) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    // If room is public and user is not a participant, add them
+    if (room.isPublic && !isParticipant && !isHost) {
+      await prisma.room.update({
+        where: { id: room.id },
+        data: {
+          participants: {
+            connect: {
+              id: session.user.id
+            }
+          }
+        }
+      });
     }
 
     // Upload file to blob storage

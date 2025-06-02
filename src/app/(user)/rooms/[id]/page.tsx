@@ -376,8 +376,16 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
     );
   }
 
+  // if (roomLoading || !room || !session || !session.user) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-[#1a0850] via-[#2a0c73] to-[#1e1a4b]">
+  //       <Loading variant="overlay" text="Loading room..." />
+  //     </div>
+  //   );
+  // }
   if (roomLoading || !room || !session || !session.user) {
     return <Loading variant="page" text="Loading room..." />;
+
   }
 
   return (
@@ -559,7 +567,10 @@ export default function RoomSessionPage({ params }: { params: Promise<{ id: stri
           )}
           {/* Track List or Skeleton */}
           {loopsLoading ? (
-            <TrackListSkeleton />
+            <div className="relative">
+              <Loading variant="overlay" text="Loading tracks..." />
+              <TrackListSkeleton />
+            </div>
           ) : (
             <div className="space-y-6">
               {[...(loopsData ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((track: Loop) => (
